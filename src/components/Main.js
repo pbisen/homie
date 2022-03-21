@@ -6,6 +6,7 @@ import 'swiper/swiper-bundle.min.css'
 import 'swiper/swiper.min.css'
 import "./styles.css";
 import SwiperCore, { Pagination, Keyboard, Navigation } from "swiper";
+import Web3 from 'web3'
 SwiperCore.use([Keyboard]);
 class Main extends Component {
   
@@ -67,13 +68,13 @@ class Main extends Component {
                         <p className='text-white text-left pl-2'>{video.description}</p>
                       <li key={key} className="list-group-item py-2 card-footer">
                         <small className="float-left text-white pt-1">
-                          TIPS: {window.web3.utils.fromWei(video.tipAmount.toString(), 'Ether')} ETH
+                          TIPS: {video.tipAmount/(10**18)} ETH
                         </small>
                         <button
                           className="btn btn-link btn-sm float-right tip-button"
                           name={video.id}
                           onClick={(event) => {
-                            let tipAmount = window.web3.utils.toWei('0.1', 'Ether')
+                            let tipAmount = (1*(10**17));
                             console.log(event.target.name, tipAmount)
                             this.props.tipVideoOwner(event.target.name, tipAmount)
                           }}
@@ -85,7 +86,7 @@ class Main extends Component {
                   </div>
                   <div className='col-lg-4'>
                       <div className='card otherInfo'>
-                          <h1>hehe</h1>
+                          <h5>{video.description}</h5>
                       </div>
                   </div>
                   </SwiperSlide>

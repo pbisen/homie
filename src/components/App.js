@@ -51,6 +51,8 @@ class App extends Component {
 
   async loadBlockchainData() {
 
+    
+
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
 
