@@ -1,6 +1,18 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.8.0;
+import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
 
-contract homie {
+
+
+contract homie is BaseRelayRecipient{
+
+
+
+    constructor() {
+        trustedForwarder = 0xF82986F574803dfFd9609BE8b9c7B92f63a1410E;
+    }
+
+  
+
     string public name = "homie";
     uint public videoCount = 0;
 
@@ -35,11 +47,11 @@ contract homie {
     function uploadVideo(string memory _VideoHash, string memory _description) public{
       require(bytes(_description).length > 0, 'Empty Description');
       require(bytes(_VideoHash).length > 0, 'Empty VideoHash');
-      require(msg.sender != address(0), 'Empty Address');
+      require(payable(_msgSender()) != address(0), 'Empty Address');
       videoCount = videoCount + 1;
-      Videos[videoCount] = Video(videoCount, _VideoHash, _description, 0, msg.sender);
+      Videos[videoCount] = Video(videoCount, _VideoHash, _description, 0, payable(_msgSender()));
 
-      emit VideoCreated(videoCount, _VideoHash, _description, 0, msg.sender);
+      emit VideoCreated(videoCount, _VideoHash, _description, 0, payable(_msgSender()));
     }
     //Tip Videos
 
@@ -48,12 +60,16 @@ contract homie {
       require(_id > 0 && _id <= videoCount, 'Invalid Video Chosen for Tipping');
       Video memory _Video = Videos[_id];
       address payable _author = _Video.author;
-      address(_author).transfer(msg.value);
+      payable(address(_author)).transfer(msg.value);
 
       _Video.tipAmount = _Video.tipAmount + msg.value;
 
       Videos[_id] = _Video;
 
       emit VideoTipped(_id, _Video.hashValue, _Video.description, _Video.tipAmount, _author);
+    }
+
+    function versionRecipient() external virtual override view returns (string memory) {
+        return "1";
     }
 }
