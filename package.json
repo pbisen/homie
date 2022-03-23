@@ -33,7 +33,7 @@
     "web3.storage": "^3.5.7"
   },
   "resolutions": {
-    "web3.storage/ipns/peer-id": "0.14.8"
+    "ipfs-http-client/ipns/peer-id": "0.14.8"
   },
   "scripts": {
     "start": "react-scripts start",
