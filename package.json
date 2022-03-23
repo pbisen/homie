@@ -35,6 +35,9 @@
   "resolutions": {
     "ipfs-http-client/ipns/peer-id": "0.14.8"
   },
+  "engines": {
+    "node": "12.22.11"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
