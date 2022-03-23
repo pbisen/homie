@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+
 #app { height: 100% }
 html,
 body {
@@ -11,35 +13,85 @@ body {
 } */
 
 body {
-  background-color: 	#292b2c;
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  background-image: url("background-gradient.jpg");
+  background-size: cover;
+  font-family: 'Montserrat', sans-serif;
+  color: white;
   font-size: 14px;
-  color: #000;
   margin: 0;
   padding: 0;
 }
+
+.card-header{
+  background-color: #1b1b1b;
+  margin: 0;
+  height: 3.5rem;
+  font-size: 1.3rem;
+  display: flex;
+
+}
+
+.card-footer{
+  background-color: #1b1b1b;
+  text-align: left;
+  font-size: 1.3rem;
+  height: 3.5rem;
+  display: flex;
+}
+
+.card{
+  margin-top: 5rem;
+  margin-right: 0;
+  background-color: black;
+  padding: 0;
+  width: 75rem;
+  text-align: center;
+}
+
+.card-header-buttons{
+  text-align: right;
+}
+
+.card-header-buttons button{
+ background-color: black;
+ color: white;
+ border: none;
+ padding-left: 3rem;
+ padding-right: 3rem;
+ font-weight: 600;
+ margin-top: -1.4rem; 
+ height: 2.5rem;
+ margin-left: 1rem;
+ font-size: medium;
+}
+
+.emptySpace{
+  margin-right: 11.2rem;
+}
+
+
+
 
 
 
 .swiper-slide {
   text-align: center;
-  font-size: 18px;
-  background: 	#292b2c;
-
   /* Center slide text vertically */
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-  /* -webkit-box-pack: center;
+
+  /* display: flex; */
+  -webkit-box-pack: center;
   -ms-flex-pack: center;
   -webkit-justify-content: center;
   justify-content: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
   -webkit-align-items: center;
-  align-items: center; */
-  padding-left: 2rem;
+  align-items: center;
+  margin-right: 0 !important;
+}
+
+.swiper-slide-active{
+  text-align: center;
 }
 
 .swiper-slide img {
@@ -57,13 +109,7 @@ body {
     z-index: 0;
 }
 
-.otherInfo{
-    background-color: 	#292b2c;
-    margin-top: 3rem;
-    border-style: solid;
-    height: 95%;
+.author{
+  font-weight: 400;
 }
 
-.upload{
-  background-color: 	#ffffff;
-}

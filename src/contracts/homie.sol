@@ -7,8 +7,8 @@ contract homie is BaseRelayRecipient{
 
 
 
-    constructor() {
-        trustedForwarder = 0xF82986F574803dfFd9609BE8b9c7B92f63a1410E;
+    constructor(){
+        trustedForwarder = 0x9399BB24DBB5C4b782C70c2969F58716Ebbd6a3b;
     }
 
   
@@ -60,7 +60,7 @@ contract homie is BaseRelayRecipient{
       require(_id > 0 && _id <= videoCount, 'Invalid Video Chosen for Tipping');
       Video memory _Video = Videos[_id];
       address payable _author = _Video.author;
-      payable(address(_author)).transfer(msg.value);
+      _author.transfer(msg.value);
 
       _Video.tipAmount = _Video.tipAmount + msg.value;
 

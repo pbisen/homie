@@ -1,7 +1,7 @@
 require('babel-register');
 require('babel-polyfill');
 require('dotenv').config()
-const HDWalletProvider = require('truffle-hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
   networks: {
@@ -18,7 +18,11 @@ module.exports = {
         )
       },
       network_id: 42,
-    }
+    },
+    matic: {
+      provider: () => new HDWalletProvider(process.env.MNEMONIC, `https://rpc-mumbai.maticvigil.com`),
+      network_id: 80001,
+    },
   },
   contracts_directory: './src/contracts/',
   contracts_build_directory: './src/abis/',

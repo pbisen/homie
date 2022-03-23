@@ -13,44 +13,14 @@ class Main extends Component {
 
   render() {
     return (
-      <div className="body pb-2">
-        <div className="row mx-0 pl-1">
-          <div className='col-lg-2 p-1'>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <form onSubmit={(event) => {
-              event.preventDefault()
-              const description = this.videoDescription.value
-              this.props.uploadVideo(description)
-            }} 
-              
-              className="p-3 upload">
-              <input type='file' accept='.mp4' onChange={this.props.getFiles}></input>
-
-              <div className='form-group mr-sm-2'>
-                <br></br>
-                <input id="videoDescription" type="text" ref={(input) => { this.videoDescription = input }}
-                  className="form-control" placeholder='Video Description here'
-                  required
-                />
-              </div>
-              <button type='submit' className='btn btn-primary btn-block btn-lg'>Upload!</button>
-            </form>
+      <div className="body">
+        <div className="row mx-0">
+          <div className='col-lg-1 align-self-left emptySpace'>
           </div>
-            <div className="col-lg-10 mr-0">
-              <div className=''>
+        <div className="col-lg-9 columnView">
               <Swiper
               slidesPerView={1}
-              spaceBetween={30}
+
               keyboard={{
                 enabled: true,
               }}
@@ -61,34 +31,32 @@ class Main extends Component {
               {this.props.videos.map((video, key) => {
                 return (
                   <SwiperSlide>
-                    <div className="card col-lg-8" key={key} >
+                    <div className="card col-lg-12" key={key} >
+                      <div className='card-header'>
+                        <p className='author'>{video.author}</p>
+                        <div className='card-header-buttons ml-auto'>
+                        <button className='rounded'>Follow</button>
+                        <button className='rounded' name={video.id}
+                          onClick={(event) => {
+                            this.props.tipVideoOwner(event.target.name, 10**18)
+                          }}>Tip 1 MATIC</button>
+
+                        </div>
+                        
+                      </div>
                     
                     <ul id="videoList" className="list-group list-group-flush">
-                        <p className="videoPlayer"><video src={`https://${video.hashValue}.ipfs.dweb.link/${video.id}.mp4`} type="video/mp4" controls width='1000' /></p>
-                        <p className='text-white text-left pl-2'>{video.description}</p>
-                      <li key={key} className="list-group-item py-2 card-footer">
-                        <small className="float-left text-white pt-1">
-                          TIPS: {video.tipAmount/(10**18)} ETH
-                        </small>
-                        <button
-                          className="btn btn-link btn-sm float-right tip-button"
-                          name={video.id}
-                          onClick={(event) => {
-                            let tipAmount = (1*(10**17));
-                            console.log(event.target.name, tipAmount)
-                            this.props.tipVideoOwner(event.target.name, tipAmount)
-                          }}
-                        >
-                          TIP 0.1 ETH
-                        </button>
-                      </li>
+                        <p className="videoPlayer"><video src={`https://${video.hashValue}.ipfs.dweb.link/${video.id}.mp4`} type="video/mp4" height="600px" controls/></p>
+                     
                     </ul>
+                    <li key={key} className="list-group-item card-footer">
+                        <p className='footer-text'>{video.description}</p>
+                        <small className="ml-auto text-white pt-1 ">
+                          TIPS: {(video.tipAmount)/10**18} MATIC
+                        </small>
+                      </li>
                   </div>
-                  <div className='col-lg-4'>
-                      <div className='card otherInfo'>
-                          <h5>{video.description}</h5>
-                      </div>
-                  </div>
+                 
                   </SwiperSlide>
                   
                 )
@@ -98,22 +66,26 @@ class Main extends Component {
             
               </Swiper>
 
-              </div>
+              
 
               
               
 
-
-            </div>
 
         
         </div>
+          
+
+          </div>
+            
       </div>
     );
   }
 }
 
 export default Main;
+
+
 
 
 
