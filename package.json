@@ -2,7 +2,7 @@
   "name": "name...",
   "version": "0.1.0",
   "description": "description...",
-  "author": "gregory@dappuniversity.com",
+  "author": "pbisen",
   "dependencies": {
     "@biconomy/mexa": "^2.0.30",
     "@opengsn/gsn": "^2.1.0",
@@ -21,9 +21,7 @@
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "identicon.js": "^2.3.3",
-    "peer-id": "0.14.8",
     "ipfs-http-client": "47.0.1",
-    
     "react": "16.8.4",
     "react-bootstrap": "1.0.0-beta.5",
     "react-dom": "16.8.4",
@@ -33,6 +31,9 @@
     "truffle": "5.0.5",
     "web3": "1.0.0-beta.55",
     "web3.storage": "^3.5.7"
+  },
+  "resolutions": {
+    "ipfs-http-client/ipns": "0.11.0"
   },
   "scripts": {
     "start": "react-scripts start",
