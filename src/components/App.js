@@ -20,7 +20,7 @@ const web3 = new Web3(biconomy);
 function getAccessToken() {
   // If you're just testing, you can paste in a token
   // and uncomment the following line:
-  return process.env.WEB3STORAGE_TOKEN;
+  return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDZGNTMzNkExNjE5QzdFQzJhOWY2MEQxOUE4NGZCZDJkRjBDNTI1NTUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NDc3NjY4NDQzNTQsIm5hbWUiOiJob21pZS1pcGZzIn0.5qpLFVg5SDWmKa2pgx-zHXIAVQb7jsD0utzY3y5g4Bg";
 
   // In a real app, it's better to read an access token from an 
   // environement variable or other configuration that's kept outside of 
