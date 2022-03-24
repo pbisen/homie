@@ -35,7 +35,10 @@ class Main extends Component {
                       <div className='card-header'>
                         <p className='author'>{video.author}</p>
                         <div className='card-header-buttons ml-auto'>
-                        <button className='rounded'>Follow</button>
+                        <button className='rounded'
+                          onClick={(event) => {
+                            this.props.followAcc(video.author)
+                          }}>Follow</button>
                         <button className='rounded' name={video.id}
                           onClick={(event) => {
                             this.props.tipVideoOwner(event.target.name, 10**18)

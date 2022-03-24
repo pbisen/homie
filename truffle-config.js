@@ -23,6 +23,15 @@ module.exports = {
       provider: () => new HDWalletProvider(process.env.MNEMONIC, `https://rpc-mumbai.maticvigil.com`),
       network_id: 80001,
     },
+    alchemy: {
+      provider: function(){
+        return new HDWalletProvider(
+          process.env.MNEMONIC,
+          process.env.ALCHEMY_API
+        )
+      },
+      network_id: 80001,
+    },
   },
   contracts_directory: './src/contracts/',
   contracts_build_directory: './src/abis/',

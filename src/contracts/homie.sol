@@ -3,7 +3,7 @@ import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
 
 
 
-contract homie is BaseRelayRecipient{
+contract homie is BaseRelayRecipient {
 
 
 
@@ -16,8 +16,12 @@ contract homie is BaseRelayRecipient{
     string public name = "homie";
     uint public videoCount = 0;
 
+    mapping(address => uint) public followerCount;
+
     //Store Videos
     mapping(uint256 => Video) public Videos;
+
+    mapping(address => address[]) public following;
 
     struct Video {
         uint256 id;
@@ -25,6 +29,7 @@ contract homie is BaseRelayRecipient{
         string description;
         uint256 tipAmount;
         address payable author;
+        bool followerExclusive;
     }
 
     event VideoCreated(
@@ -44,12 +49,12 @@ contract homie is BaseRelayRecipient{
     );
 
     //Create Videos
-    function uploadVideo(string memory _VideoHash, string memory _description) public{
+    function uploadVideo(string memory _VideoHash, string memory _description, bool followerOnly) public{
       require(bytes(_description).length > 0, 'Empty Description');
       require(bytes(_VideoHash).length > 0, 'Empty VideoHash');
       require(payable(_msgSender()) != address(0), 'Empty Address');
       videoCount = videoCount + 1;
-      Videos[videoCount] = Video(videoCount, _VideoHash, _description, 0, payable(_msgSender()));
+      Videos[videoCount] = Video(videoCount, _VideoHash, _description, 0, payable(_msgSender()), followerOnly);
 
       emit VideoCreated(videoCount, _VideoHash, _description, 0, payable(_msgSender()));
     }
@@ -71,5 +76,10 @@ contract homie is BaseRelayRecipient{
 
     function versionRecipient() external virtual override view returns (string memory) {
         return "1";
+    }
+
+    function followAccount(address author) public {
+      following[_msgSender()].push(author);
+      followerCount[_msgSender()] = followerCount[_msgSender()] + 1; 
     }
 }

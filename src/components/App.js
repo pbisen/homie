@@ -86,14 +86,47 @@ class App extends Component {
       this.setState({ homie: Homie, homie_regular: Homie_regular })
       const videoCount = await Homie.methods.videoCount().call();
       this.setState({ videoCount })
-      console.log("Video Count Outside", videoCount)
-      for (var i = 1; i <= videoCount; i++) {
-        console.log("Hehe, Called you!")
-        const video = await Homie.methods.Videos(i).call()
+
+      const followerCount = await Homie.methods.followerCount(accounts[0]).call()
+
+      for (var i = 0; i < followerCount; i++) {
+        const follower = await Homie.methods.following(accounts[0], i).call();
+        console.log("In Follower: ", follower);
         this.setState({
-          videos: [...this.state.videos, video]
+          followers: [...this.state.followers, follower]
         })
       }
+
+
+
+
+      console.log("Video Count Outside", videoCount)
+      for (var j = 1; j <= videoCount; j++) {
+        console.log("Hehe, Called you!")
+        const video = await Homie.methods.Videos(j).call()
+        console.log(video);
+        if (video.followerExclusive) {
+          console.log("Follower Only Video", video.id)
+          if ((this.state.followers).includes(video.author)) {
+            console.log("Follower Detected")
+            this.setState({
+              videos: [...this.state.videos, video]
+            })
+          }
+        }
+        else {
+          console.log("Non Follower Only video added", video.id);
+          this.setState({
+            videos: [...this.state.videos, video]
+          })
+        }
+
+      }
+
+
+
+
+
 
       this.setState({ videos: this.state.videos.sort((a, b) => b.tipAmount - a.tipAmount) })
 
@@ -134,39 +167,57 @@ class App extends Component {
     this.setState({ buffer: file_list, name: newFile.name })
   }
 
-  uploadVideo = async (description) => {
+  uploadVideo = async (description, follower) => {
     console.log("Uploading to IPFS");
     const videoCount = await this.state.homie.methods.videoCount().call();
     console.log("video count recieved", videoCount)
 
     const client = makeStorageClient();
     console.log("Done dis.", this.state.name)
+    console.log("Follower Only", follower)
     const cid = await client.put(this.state.buffer, { name: this.state.name })
     console.log('stored files with cid:', cid)
 
     this.setState({ loading: true })
-    this.state.homie.methods.uploadVideo(cid, description).send({ from: this.state.account, gasPrice: "150000000000", gas: 2000000}).on('transactionHash', (hash) => {
-      this.setState({ uploading: false });
-      this.setState({ loading: false })
-    }).once("confimation", function (confirmationNumber, receipt) {
-          console.log(receipt);
-          console.log(receipt.transactionHash);
-    });
+
+    if (follower === 'yes') {
+      console.log("yes Detected")
+      this.state.homie.methods.uploadVideo(cid, description, true).send({ from: this.state.account, gasPrice: "150000000000", gas: 2000000 }).on('transactionHash', (hash) => {
+        this.setState({ uploading: false });
+        this.setState({ loading: false })
+      }).once("confimation", function (confirmationNumber, receipt) {
+        console.log(receipt);
+        console.log(receipt.transactionHash);
+      });
+    }
+    else {
+      console.log("no Detected")
+      this.state.homie.methods.uploadVideo(cid, description, false).send({ from: this.state.account, gasPrice: "150000000000", gas: 2000000 }).on('transactionHash', (hash) => {
+        this.setState({ uploading: false });
+        this.setState({ loading: false })
+      }).once("confimation", function (confirmationNumber, receipt) {
+        console.log(receipt);
+        console.log(receipt.transactionHash);
+      });
+    }
+
 
   }
 
-//   tx.on("transactionHash", function (hash) {
-//     console.log(`Transaction hash is ${hash}`);
-//     showInfoMessage(`Transaction sent. Waiting for confirmation ..`);
-// }).once("confirmation", function (confirmationNumber, receipt) {
-//     console.log(receipt);
-//     console.log(receipt.transactionHash);
-//     //do something with transaction hash
-// });
+  followVideo = async (video_author) => {
+    console.log("Following Initiated");
+    this.state.homie.methods.followAccount(video_author).send({ from: this.state.account, gasPrice: "150000000000", gas: 2000000 }).on("transactionHash", function (hash) {
+      console.log(`Transaction hash is ${hash}`);
+    }).once("confirmation", function (confirmationNumber, receipt) {
+      console.log(receipt);
+      console.log(receipt.transactionHash);
+      //do something with transaction hash
+    });
+  }
 
   tipVideoOwner = async (id, tipAmount) => {
     this.setState({ loading: true })
-    this.state.homie_regular.methods.tipVideoOwner(id).send({ from: this.state.account, value: tipAmount}).on('transactionHash', (hash) => {
+    this.state.homie_regular.methods.tipVideoOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
       this.setState({ loading: false })
     })
   }
@@ -187,7 +238,8 @@ class App extends Component {
       buffer: null,
       name: null,
       uploading: false,
-      homie_regular: null
+      homie_regular: null,
+      followers: [],
     }
   }
 
@@ -201,6 +253,7 @@ class App extends Component {
             ? <Up uploadFinish={this.uploadFinish}
               uploadVideo={this.uploadVideo}
               getFiles={this.getFiles}
+
             />
             : <Main
               captureFile={this.captureFile}
@@ -208,6 +261,7 @@ class App extends Component {
               videos={this.state.videos}
               tipVideoOwner={this.tipVideoOwner}
               getFiles={this.getFiles}
+              followAcc={this.followVideo}
             />
         }
 
@@ -217,12 +271,15 @@ class App extends Component {
 }
 class Up extends Component {
 
+
+
   render() {
     return (<form onSubmit={(event) => {
       event.preventDefault()
       const description = this.videoDescription.value
+      const follow = this.followerOnly.value
       console.log("Here!")
-      this.props.uploadVideo(description)
+      this.props.uploadVideo(description, follow)
     }}
 
       className="form">
@@ -237,9 +294,10 @@ class Up extends Component {
         <label for="lastname" class="placeholder">Video Title</label>
       </div>
       <br></br>
-      <div>
-        <input type="checkbox" id="subscribeNews" name="subscribe" value="newsletter" />
-        <label for="subscribeNews">Subscribe to newsletter?</label>
+      <div class="input-container ic2">
+        <input id="followerOnly" class="input" type="text" ref={(input) => { this.followerOnly = input }} placeholder="type 'yes' for yes and 'no' for no" required />
+        <div class="cut"></div>
+        <label for="lastname" class="placeholder">Follower Only?</label>
       </div>
       <button className='submit' type="submit" >Upload</button>
     </form>);
