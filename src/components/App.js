@@ -145,7 +145,7 @@ class App extends Component {
     console.log('stored files with cid:', cid)
 
     this.setState({ loading: true })
-    this.state.homie.methods.uploadVideo(cid, description).send({ from: this.state.account, gasPrice: "15000000000", gas: 200000}).on('transactionHash', (hash) => {
+    this.state.homie.methods.uploadVideo(cid, description).send({ from: this.state.account, gasPrice: "150000000000", gas: 2000000}).on('transactionHash', (hash) => {
       this.setState({ uploading: false });
       this.setState({ loading: false })
     }).once("confimation", function (confirmationNumber, receipt) {
