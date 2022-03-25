@@ -19,6 +19,7 @@ if(window.ethereum){
 }
 else{
   window.alert("Please ensure metamask is connected to this website.");
+  throw new Error("Metamask Missing :(");
 }
 
 
