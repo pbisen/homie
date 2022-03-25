@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react';
 import Web3 from 'web3';
-import Identicon from 'identicon.js';
 import './App.css';
 import homie from '../abis/homie.json'
 import Navbar from './Navbar'
@@ -11,8 +10,18 @@ import { Web3Storage } from 'web3.storage/dist/bundle.esm.min.js'
 
 import { Biconomy } from "@biconomy/mexa";
 
-const biconomy = new Biconomy(window.ethereum, { apiKey: "qGBQ-YcM0.bdce0ef1-31fc-40de-acfa-f8101478578d", debug: true });
-const web3 = new Web3(biconomy);
+let biconomy;
+let web3;
+
+if(window.ethereum){
+   biconomy = new Biconomy(window.ethereum, { apiKey: "qGBQ-YcM0.bdce0ef1-31fc-40de-acfa-f8101478578d", debug: true });
+   web3 = new Web3(biconomy);
+}
+else{
+  window.alert("Please ensure metamask is connected to this website.");
+}
+
+
 
 
 
@@ -42,14 +51,16 @@ function makeStorageClient() {
 class App extends Component {
 
   async componentWillMount() {
-    biconomy.onEvent(biconomy.READY, async () => {
-      console.log("Done Biconomy!")
-    }).onEvent(biconomy.ERROR, (error, message) => {
-      // Handle error while initializing mexa
-    });
+    
 
     await this.loadWeb3()
     await this.loadBlockchainData()
+
+    biconomy.onEvent(biconomy.READY, async () => {
+      console.log("Biconomy Ready!")
+    }).onEvent(biconomy.ERROR, (error, message) => {
+      // Handle error while initializing mexa
+    });
   }
 
   async loadWeb3() {
@@ -81,8 +92,8 @@ class App extends Component {
     if (networkData) {
       const Homie = await web3.eth.Contract(homie.abi, networkData.address);
       const Homie_regular = await web32.eth.Contract(homie.abi, networkData.address);
-      console.log("bicon", Homie);
-      console.log("regular", Homie_regular);
+      // console.log("bicon", Homie);
+      // console.log("regular", Homie_regular);
       this.setState({ homie: Homie, homie_regular: Homie_regular })
       const videoCount = await Homie.methods.videoCount().call();
       this.setState({ videoCount })
@@ -91,24 +102,29 @@ class App extends Component {
 
       for (var i = 0; i < followerCount; i++) {
         const follower = await Homie.methods.following(accounts[0], i).call();
-        console.log("In Follower: ", follower);
+        // console.log("In Follower: ", follower);
         this.setState({
           followers: [...this.state.followers, follower]
         })
       }
 
+      this.setState({
+        followers: [...this.state.followers, this.state.account]
+      })
 
 
 
-      console.log("Video Count Outside", videoCount)
+
+
+      // console.log("Video Count Outside", videoCount)
       for (var j = 1; j <= videoCount; j++) {
-        console.log("Hehe, Called you!")
+        // console.log("Hehe, Called you!")
         const video = await Homie.methods.Videos(j).call()
-        console.log(video);
+        // console.log(video);
         if (video.followerExclusive) {
           console.log("Follower Only Video", video.id)
           if ((this.state.followers).includes(video.author)) {
-            console.log("Follower Detected")
+            // console.log("Follower Detected")
             this.setState({
               videos: [...this.state.videos, video]
             })
@@ -152,54 +168,77 @@ class App extends Component {
   // }
 
   getFiles = async () => {
-    const fileInput = document.querySelector('input[type="file"]')
+    let fileInput = document.querySelector('input[type="file"][id="video"]')
+    
     const videoCount = await this.state.homie.methods.videoCount().call();
-    console.log("video count recieved", videoCount)
+    // console.log("video count recieved", videoCount)
     var file = fileInput.files[0];
-    console.log("Old", fileInput.files);
+    // console.log("Old", fileInput.files);
     const newFile = new File([file], `${Number(videoCount) + 1}.mp4`, { type: 'video/mp4' })
-
     var dt = new DataTransfer();
     dt.items.add(newFile);
     var file_list = dt.files;
 
-    console.log("New", file_list);
     this.setState({ buffer: file_list, name: newFile.name })
+
+    fileInput = document.querySelector('input[type="file"][id="image"]')
+
+    var file2 = fileInput.files[0]
+    const newFile2 = new File([file2], `${Number(videoCount) + 1}.jpg`, { type: 'image/jpg' })
+    // const reader = new window.FileReader()
+    // reader.readAsArrayBuffer(newFile2)
+    var dt1 = new DataTransfer();
+    dt1.items.add(newFile2);
+    var file_list1 = dt1.files;
+
+      this.setState({ buffer1: file_list1, imageName: newFile2.name })
+
+      console.log("Files: ", this.state.buffer, this.state.buffer1);
+
+    
+
+
+    // console.log("New", file_list);
   }
 
   uploadVideo = async (description, follower) => {
     console.log("Uploading to IPFS");
-    const videoCount = await this.state.homie.methods.videoCount().call();
-    console.log("video count recieved", videoCount)
+    // const videoCount = await this.state.homie.methods.videoCount().call();
+    // console.log("video count recieved", videoCount)
 
     const client = makeStorageClient();
-    console.log("Done dis.", this.state.name)
-    console.log("Follower Only", follower)
+    // console.log("Done dis.", this.state.name)
+    // console.log("Follower Only", follower)
     const cid = await client.put(this.state.buffer, { name: this.state.name })
     console.log('stored files with cid:', cid)
+
+    const cid2 = await client.put(this.state.buffer1, { name: this.state.imageName })
+    console.log('stored files with cid:', cid2)
 
     this.setState({ loading: true })
 
     if (follower === 'yes') {
-      console.log("yes Detected")
-      this.state.homie.methods.uploadVideo(cid, description, true).send({ from: this.state.account, gasPrice: "150000000000", gas: 2000000 }).on('transactionHash', (hash) => {
+      // console.log("yes Detected")
+      this.state.homie.methods.uploadVideo(cid, description, true, cid2).send({ from: this.state.account, gasPrice: "150000000000", gas: 2000000 }).on('transactionHash', (hash) => {
         this.setState({ uploading: false });
         this.setState({ loading: false })
       }).once("confimation", function (confirmationNumber, receipt) {
-        console.log(receipt);
-        console.log(receipt.transactionHash);
+         console.log(receipt);
+         console.log(receipt.transactionHash);
       });
     }
     else {
-      console.log("no Detected")
-      this.state.homie.methods.uploadVideo(cid, description, false).send({ from: this.state.account, gasPrice: "150000000000", gas: 2000000 }).on('transactionHash', (hash) => {
+      // console.log("no Detected")
+      this.state.homie.methods.uploadVideo(cid, description, false, cid2).send({ from: this.state.account, gasPrice: "150000000000", gas: 2000000 }).on('transactionHash', (hash) => {
         this.setState({ uploading: false });
         this.setState({ loading: false })
       }).once("confimation", function (confirmationNumber, receipt) {
-        console.log(receipt);
-        console.log(receipt.transactionHash);
+         console.log(receipt);
+         console.log(receipt.transactionHash);
       });
     }
+
+  
 
 
   }
@@ -236,6 +275,7 @@ class App extends Component {
       videos: [],
       loading: true,
       buffer: null,
+      buffer1: null,
       name: null,
       uploading: false,
       homie_regular: null,
@@ -262,6 +302,8 @@ class App extends Component {
               tipVideoOwner={this.tipVideoOwner}
               getFiles={this.getFiles}
               followAcc={this.followVideo}
+              followers={this.state.followers}
+              account={this.state.account}
             />
         }
 
@@ -278,27 +320,38 @@ class Up extends Component {
       event.preventDefault()
       const description = this.videoDescription.value
       const follow = this.followerOnly.value
-      console.log("Here!")
+
+      console.log("Upload Procedure Started")
+      
+
       this.props.uploadVideo(description, follow)
+
+      
     }}
 
       className="form">
-      <div class="title">Welcome</div>
-      <div class="subtitle">Let's upload your clips to homie </div>
-      <div class="input-container ic1">
-        <input type='file' accept='.mp4' onChange={this.props.getFiles}></input>
+      <div className="title">Welcome</div>
+      <div className="subtitle">Let's upload your clips to homie </div>
+      <div className="input-container ic2">
+        <p>Video: </p>
+        <input type='file' id="video"  accept='.mp4' required></input>
+        <hr></hr>
+        <p>Thumbnail</p>
+        <input type='file' id = "image" accept='.jpg' onChange={this.props.getFiles} required></input>
+        
       </div>
-      <div class="input-container ic2">
-        <input id="videoDescription" class="input" type="text" ref={(input) => { this.videoDescription = input }} placeholder=" " required />
-        <div class="cut"></div>
-        <label for="lastname" class="placeholder">Video Title</label>
+      <div className="input-container ic2">
+      <label>Video Title</label>
+        <input id="videoDescription" className="input" type="text" ref={(input) => { this.videoDescription = input }} placeholder=" " required />
+        
+      </div>
+      <div className="input-container ic2">
+        <label>Follower Exclusive?</label>
+        <input id="followerOnly" className="input" type="text" ref={(input) => { this.followerOnly = input }} placeholder="type 'yes' for yes and 'no' for no" required />
+  
+        
       </div>
       <br></br>
-      <div class="input-container ic2">
-        <input id="followerOnly" class="input" type="text" ref={(input) => { this.followerOnly = input }} placeholder="type 'yes' for yes and 'no' for no" required />
-        <div class="cut"></div>
-        <label for="lastname" class="placeholder">Follower Only?</label>
-      </div>
       <button className='submit' type="submit" >Upload</button>
     </form>);
   }

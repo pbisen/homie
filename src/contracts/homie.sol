@@ -30,6 +30,7 @@ contract homie is BaseRelayRecipient {
         uint256 tipAmount;
         address payable author;
         bool followerExclusive;
+        string image;
     }
 
     event VideoCreated(
@@ -49,12 +50,12 @@ contract homie is BaseRelayRecipient {
     );
 
     //Create Videos
-    function uploadVideo(string memory _VideoHash, string memory _description, bool followerOnly) public{
+    function uploadVideo(string memory _VideoHash, string memory _description, bool followerOnly, string memory _imageHash) public{
       require(bytes(_description).length > 0, 'Empty Description');
       require(bytes(_VideoHash).length > 0, 'Empty VideoHash');
       require(payable(_msgSender()) != address(0), 'Empty Address');
       videoCount = videoCount + 1;
-      Videos[videoCount] = Video(videoCount, _VideoHash, _description, 0, payable(_msgSender()), followerOnly);
+      Videos[videoCount] = Video(videoCount, _VideoHash, _description, 0, payable(_msgSender()), followerOnly, _imageHash);
 
       emit VideoCreated(videoCount, _VideoHash, _description, 0, payable(_msgSender()));
     }

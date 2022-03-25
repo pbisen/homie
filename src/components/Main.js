@@ -1,12 +1,10 @@
-import React, { Component, useRef, useState } from 'react';
-import Identicon from 'identicon.js';
-import { getFilesFromPath } from 'web3.storage/dist/bundle.esm.min';
+import React, { Component} from 'react';
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/swiper-bundle.min.css'
 import 'swiper/swiper.min.css'
 import "./styles.css";
-import SwiperCore, { Pagination, Keyboard, Navigation } from "swiper";
-import Web3 from 'web3'
+import SwiperCore, {Keyboard} from "swiper";
+
 SwiperCore.use([Keyboard]);
 class Main extends Component {
   
@@ -30,15 +28,47 @@ class Main extends Component {
               >
               {this.props.videos.map((video, key) => {
                 return (
-                  <SwiperSlide>
+                  <SwiperSlide key={key}>
                     <div className="card col-lg-12" key={key} >
-                      <div className='card-header'>
+
+                      {video.followerExclusive && 
+                      <div className='card-header follower-ex'>
                         <p className='author'>{video.author}</p>
+                        
                         <div className='card-header-buttons ml-auto'>
-                        <button className='rounded'
-                          onClick={(event) => {
+                          
+                        {(this.props.followers).includes(video.author) && (<button className='rounded following'
+                          >Following</button>)} 
+                          
+                          {!(this.props.followers).includes(video.author) && (<button className='rounded' onClick={(event) => {
                             this.props.followAcc(video.author)
-                          }}>Follow</button>
+                          }}
+                          >Follow</button>)}
+          
+                        
+                        <button className='rounded' name={video.id}
+                          onClick={(event) => {
+                            this.props.tipVideoOwner(event.target.name, 10**18)
+                          }}>Tip 1 MATIC</button>
+
+                        </div>
+                        
+                      </div>}
+
+                      {!video.followerExclusive && <div className='card-header'>
+                        <p className='author'>{video.author}</p>
+                        
+                        <div className='card-header-buttons ml-auto'>
+                          
+                        {(this.props.followers).includes(video.author) && (<button className='rounded following'
+                          >Following</button>)} 
+                          
+                          {!(this.props.followers).includes(video.author) && (<button className='rounded' onClick={(event) => {
+                            this.props.followAcc(video.author)
+                          }}
+                          >Follow</button>)}
+          
+                        
                         <button className='rounded' name={video.id}
                           onClick={(event) => {
                             this.props.tipVideoOwner(event.target.name, 10**18)
@@ -47,17 +77,29 @@ class Main extends Component {
                         </div>
                         
                       </div>
+                      }
                     
                     <ul id="videoList" className="list-group list-group-flush">
-                        <p className="videoPlayer"><video src={`https://${video.hashValue}.ipfs.dweb.link/${video.id}.mp4`} type="video/mp4" height="600px" controls/></p>
+                        <p className="videoPlayer"><video src={`https://${video.hashValue}.ipfs.dweb.link/${video.id}.mp4`} poster={`https://${video.image}.ipfs.dweb.link/${video.id}.jpg`}  type="video/mp4" height="600px" controls/></p>
                      
                     </ul>
-                    <li key={key} className="list-group-item card-footer">
+
+                    {video.followerExclusive && 
+                      <li key={key} className="list-group-item card-footer follower-ex">
+                      <p className='footer-text'>{video.description}</p>
+                      <small className="ml-auto text-white pt-1 ">
+                        TIPS: {(video.tipAmount)/10**18} MATIC
+                      </small>
+                    </li>}
+
+                      {!video.followerExclusive && <li key={key} className="list-group-item card-footer">
                         <p className='footer-text'>{video.description}</p>
                         <small className="ml-auto text-white pt-1 ">
                           TIPS: {(video.tipAmount)/10**18} MATIC
                         </small>
                       </li>
+                      }
+                    
                   </div>
                  
                   </SwiperSlide>

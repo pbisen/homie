@@ -24,10 +24,11 @@ body {
 
 .card-header{
   background-color: #1b1b1b;
-  margin: 0;
+  margin: -1px 0 0 0;
   height: 3.5rem;
   font-size: 1.3rem;
   display: flex;
+ 
 
 }
 
@@ -113,3 +114,10 @@ body {
   font-weight: 400;
 }
 
+.following{
+  background-color: #5e17eb !important;
+}
+
+.follower-ex{
+  background-color: #5271ff !important;
+}
