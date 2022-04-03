@@ -14,7 +14,7 @@ let biconomy;
 let web3;
 
 if(window.ethereum){
-   biconomy = new Biconomy(window.ethereum, { apiKey: "qGBQ-YcM0.bdce0ef1-31fc-40de-acfa-f8101478578d", debug: true });
+   biconomy = new Biconomy(window.ethereum, { apiKey: process.env.BICONOMY_KEY, debug: true });
    web3 = new Web3(biconomy);
 }
 else{
@@ -30,7 +30,7 @@ else{
 function getAccessToken() {
   // If you're just testing, you can paste in a token
   // and uncomment the following line:
-  return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDZGNTMzNkExNjE5QzdFQzJhOWY2MEQxOUE4NGZCZDJkRjBDNTI1NTUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NDc3NjY4NDQzNTQsIm5hbWUiOiJob21pZS1pcGZzIn0.5qpLFVg5SDWmKa2pgx-zHXIAVQb7jsD0utzY3y5g4Bg";
+  return process.env.WEB3_STORAGE_KEY;
 
   // In a real app, it's better to read an access token from an 
   // environement variable or other configuration that's kept outside of 
