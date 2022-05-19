@@ -2,6 +2,8 @@
 
 A Decentralized Short Form Video platform focussing on Landscape content, empowering traditional creators.
 Video: https://www.youtube.com/watch?v=PZSFs1pm3ak
+
+
 Deployment: hey-homie.herokuapp.com (Certificate Error w/ Heroku, You might have to wait around 1~2 minutes while refreshing, trust me it's worth it :) )
 
 ---
