@@ -4,7 +4,8 @@ A Decentralized Short Form Video platform focussing on Landscape content, empowe
 Video: https://www.youtube.com/watch?v=PZSFs1pm3ak
 
 
-Deployment: https://hey-homie.herokuapp.com (Certificate Error w/ Heroku, You might have to wait around 1~2 minutes while refreshing it a couple times, trust me it's worth it :) )
+Deployment: https://hey-homie.herokuapp.com (Down for Maintainence :(, will be up soon)
+(please refer to the video for a demo)
 
 Chain: Matic Testnet
 
