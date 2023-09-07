@@ -1,4 +1,4 @@
-# write a script that takes as input two csv files and print a list of all entries in file2 that are not in file1
+
 
 import csv
 
